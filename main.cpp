@@ -81,6 +81,7 @@ int main(){
 	}
 	cout << "You win!" << endl;
 
+	system("pause");
 
 	return 0;
 }
