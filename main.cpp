@@ -1,9 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <algorithm>
 #include <ctime>
 #include <cmath>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -41,8 +43,22 @@ int CheckAndChange (int n){
 	return n;
 }
 
+void ReadRules(const string& path){
+	ifstream input(path);
+	cout  << endl << "------------" << endl;
+	if (input){
+		string line;
+		while ( getline(input, line) ){
+			cout << line << endl;
+		}
+	}
+	cout << "------------" << endl  << endl;
+}
+
 
 int main(){
+
+	const string rules = "rules.txt";	
 
 	int X = RandFunc();
 	vector<int> X_digits;
@@ -57,18 +73,21 @@ int main(){
 
 	while ( Y!= X ){
 	
-		cout << "Enter your number (4 different digits): ";
+		cout << "Enter your number (4 different digits)" << endl;
+		cout << "If you want to know rules, enter 0" << endl;
 		cin >> Y;
-		if( Y<1000 || Y>=10000 ){
+		if( Y == 0 ){
+			ReadRules(rules);
+			continue;
+		}
+		if( (Y<1000 || Y>=10000) && Y!=0 ){
 			cout << "Wrong number!" << endl;
 			continue;
 		}
 		Y_digits = NumberToVector(Y);
-		// PrintV(Y_digits);
 
 		cows=0, bulls=0;
 		for( size_t i=0; i<Y_digits.size(); i++ ){
-		    // cout << i <<endl;
 			if( Y_digits[i] == X_digits[i] ){
 				bulls++;
 			} else {
@@ -77,7 +96,7 @@ int main(){
 				}
 			}
 		}
-		cout << "Bulls: " << bulls << " Cows: " << cows <<endl;
+		cout << "--- Bulls: " << bulls << " Cows: " << cows <<endl;
 	}
 	cout << "You win!" << endl;
 
