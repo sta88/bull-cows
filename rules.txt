@@ -1,4 +1,4 @@
-Computer has a 4-digit secret number. The digits are all different. 
+Computer has a secret number. The digits (from 3 to 6) are all different. 
 You have to guess this number. Computer gives the number of matches. 
 If the matching digits are in their right positions, they are "bulls", 
 if in different positions, they are "cows". 

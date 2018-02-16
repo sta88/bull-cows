@@ -11,41 +11,52 @@ using namespace std;
 
 int RandFunc(){
 	srand( time(0) );
-	return 1000 + rand() % 8999;
+	return rand() % 10;
 }
+
+int VectorToNumber (const vector<int>& v){
+	int x = 0;
+	double EPS = 1e-9;
+	for(size_t i=0; i<v.size(); i++ ){
+		x += v[i] * (int)(pow(10.0, i)+EPS); 
+	}
+	return x;
+}
+
+vector<int> RandNumberVector(const int& n){
+	vector<int> v;
+	int r;
+	for(size_t i=0; i<n; i++){
+		r = RandFunc();
+		if( count(v.begin(), v.end(), r) == 0 ){
+			v.push_back( r );
+		} else {
+			i--;
+		}
+	}
+	if( v[n-1] == 0 ){  // т.к. для получения числа я переворачиваю вектор, то проверим, чтобы последний элемент не был равен 0
+		v[n-1] = v[0];
+		while( count(v.begin(), v.end(), v[n-1]) > 1){
+			v[n-1] = rand() % 9 + 1;
+		}
+	}
+	return v;
+}
+
 void PrintV(const vector<int>& v){
 	for (int i : v){
 		cout << i << " ";
 	}
 	cout << endl;
 }
-vector<int> NumberToVector (int n){
+
+vector<int> NumberToVector (int x, const size_t& n){
 	vector<int> v;
-	while( n>0 ){
-		v.push_back(n%10);
-		n /= 10;
+	for(size_t i=0; i<n; i++){
+		v.push_back(x%10);
+		x /= 10;
 	}
 	return v;
-}
-int CheckAndChange (int n){
-	vector<int> v = NumberToVector(n);	
-	for (size_t i = 0; i < v.size(); i++ ){
-		if ( count(v.begin(), v.end(), v[i]) > 1 ){
-			v[i] = 1 + rand() % 9;
-			i = -1;
-		}
-	}
-	for (size_t i = 0; i < v.size(); i++ ){
-		while ( count(v.begin(), v.end(), v[i]) > 1 ){
-			v[i] = 1 + rand() % 9;
-		}
-	}
-	n = 0;
-	for (size_t i=v.size()-1; i>=1; i--){
-		n += v[i]*pow(10,i);
-	}
-	n += v[0];
-	return n;
 }
 
 void ReadRules(const string& path){
@@ -64,13 +75,17 @@ void ReadRules(const string& path){
 int main(){
 
 	const string rules = "rules.txt";	
+	int N = 0;
 
-	int X = RandFunc();
-	vector<int> X_digits;
-	// cout << X << endl;
-	X = CheckAndChange(X);
-	// cout << X << endl;
-	X_digits = NumberToVector(X);
+	while( N<3 || N>6 ){
+		cout << "Enter quantity of digits (from 3 to 6): ";
+		cin >> N;
+	}
+
+	vector<int> X_digits = RandNumberVector(N);
+	// PrintV (X_digits); // for testing
+	int X = VectorToNumber(X_digits);
+	// cout << X << endl; // for testing
 
 	int Y = 0;
 	vector<int> Y_digits;
@@ -78,18 +93,18 @@ int main(){
 
 	while ( Y!= X ){
 	
-		cout << "Enter your number (4 different digits)" << endl;
+		cout << "Enter your number (" << N << " different digits)" << endl;
 		cout << "If you want to know rules, enter 0" << endl;
 		cin >> Y;
+
 		if( Y == 0 ){
 			ReadRules(rules);
 			continue;
-		}
-		if( (Y<1000 || Y>=10000) && Y!=0 ){
+		} else if( Y<pow(10, N-1) || Y>=pow(10, N) ){
 			cout << "Wrong number!" << endl;
 			continue;
 		}
-		Y_digits = NumberToVector(Y);
+		Y_digits = NumberToVector(Y, N);
 
 		cows=0, bulls=0;
 		for( size_t i=0; i<Y_digits.size(); i++ ){
@@ -105,7 +120,7 @@ int main(){
 	}
 	cout << "You win!" << endl;
 
-	system("pause");
+	// system("pause");
 
 	return 0;
 }
