@@ -92,9 +92,9 @@ int main(){
 	}
 
 	vector<int> X_digits = RandNumberVector(N);
-	PrintV (X_digits); // for testing
+	// PrintV (X_digits); // for testing
 	int X = VectorToNumber(X_digits);
-	cout << X << endl; // for testing
+	// gitgitcout << X << endl; // for testing
 
 	int Y = 0;
 	vector<int> Y_digits;
