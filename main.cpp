@@ -35,6 +35,11 @@ int CheckAndChange (int n){
 			i = -1;
 		}
 	}
+	for (size_t i = 0; i < v.size(); i++ ){
+		while ( count(v.begin(), v.end(), v[i]) > 1 ){
+			v[i] = 1 + rand() % 9;
+		}
+	}
 	n = 0;
 	for (size_t i=v.size()-1; i>=1; i--){
 		n += v[i]*pow(10,i);
