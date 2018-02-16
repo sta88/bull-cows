@@ -9,16 +9,10 @@
 
 using namespace std;
 
-int RandFunc(){
-	srand( time(0) );
-	return rand() % 10;
-}
-
 int VectorToNumber (const vector<int>& v){
 	int x = 0;
-	double EPS = 1e-9;
 	for(size_t i=0; i<v.size(); i++ ){
-		x += v[i] * (int)(pow(10.0, i)+EPS); 
+		x += v[i] * round(pow(10.0, i)); 
 	}
 	return x;
 }
@@ -27,7 +21,7 @@ vector<int> RandNumberVector(const int& n){
 	vector<int> v;
 	int r;
 	for(size_t i=0; i<n; i++){
-		r = RandFunc();
+		r = rand() % 10;
 		if( count(v.begin(), v.end(), r) == 0 ){
 			v.push_back( r );
 		} else {
@@ -71,8 +65,23 @@ void ReadRules(const string& path){
 	cout << "------------" << endl  << endl;
 }
 
+vector<int> CountBullAndCows(const vector<int> &x, const vector<int> &y){
+	vector<int> bc = {0, 0};
+	for( size_t i=0; i<y.size(); i++ ){
+		if( y[i] == x[i] ){
+			bc[0]++;
+		} else {
+			if( find(x.begin(), x.end(), y[i]) != x.end() ){
+				bc[1]++;
+			}
+		}
+	}
+	return bc;
+}
+
 
 int main(){
+	srand( time(0) );
 
 	const string rules = "rules.txt";	
 	int N = 0;
@@ -83,12 +92,13 @@ int main(){
 	}
 
 	vector<int> X_digits = RandNumberVector(N);
-	// PrintV (X_digits); // for testing
+	PrintV (X_digits); // for testing
 	int X = VectorToNumber(X_digits);
-	// cout << X << endl; // for testing
+	cout << X << endl; // for testing
 
 	int Y = 0;
 	vector<int> Y_digits;
+	vector<int> bulls_cows;
 	int cows=0, bulls=0;	
 
 	while ( Y!= X ){
@@ -100,22 +110,16 @@ int main(){
 		if( Y == 0 ){
 			ReadRules(rules);
 			continue;
-		} else if( Y<pow(10, N-1) || Y>=pow(10, N) ){
+		} else if( Y<round(pow(10.0, N-1)) || Y>=round(pow(10.0, N)) ){
 			cout << "Wrong number!" << endl;
 			continue;
 		}
 		Y_digits = NumberToVector(Y, N);
 
-		cows=0, bulls=0;
-		for( size_t i=0; i<Y_digits.size(); i++ ){
-			if( Y_digits[i] == X_digits[i] ){
-				bulls++;
-			} else {
-				if( find(X_digits.begin(), X_digits.end(), Y_digits[i]) != X_digits.end() ){
-					cows++;
-				}
-			}
-		}
+		bulls_cows = CountBullAndCows(X_digits, Y_digits);
+		bulls = bulls_cows[0];
+		cows = bulls_cows[1];
+		
 		cout << "--- Bulls: " << bulls << " Cows: " << cows <<endl;
 	}
 	cout << "You win!" << endl;
